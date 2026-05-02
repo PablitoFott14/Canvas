@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sarah Chen — Canvas · Riverside CC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo">SC</div>
+        <div class="brand-name">
+          <span>Sarah Chen</span>
+          <small>Canvas · Riverside CC · OpenClaw</small>
+        </div>
+      </div>
+
+      <nav class="tabs">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="gradebook">Gradebook</button>
+        <button class="tab" data-tab="communications">Communications</button>
+        <button class="tab" data-tab="contacts">Contacts</button>
+        <button class="tab" data-tab="calendar">Calendar</button>
+        <button class="tab" data-tab="reminders">Reminders</button>
+      </nav>
+
+      <div class="hdr-right">
+        <span class="pulse-dot" id="status-dot"></span>
+        <span class="status-text" id="status-text">Loading…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- ── OVERVIEW ── -->
+    <section class="page active" id="page-overview">
+      <div id="overview-content"></div>
+    </section>
+
+    <!-- ── GRADEBOOK ── -->
+    <section class="page" id="page-gradebook">
+      <div class="page-title">
+        <h2>Gradebook</h2>
+        <p>Airtable records across all tables — Riverside CC Spring 2026</p>
+      </div>
+      <div class="explorer-bar">
+        <select id="gb-table" class="ex-filter">
+          <option value="">All Tables</option>
+        </select>
+        <input id="gb-search" class="ex-search" type="text" placeholder="Search by student, assignment, course…" />
+        <span class="ex-count" id="gb-count"></span>
+      </div>
+      <div id="gb-list"></div>
+      <div class="pagination" id="gb-pag"></div>
+    </section>
+
+    <!-- ── COMMUNICATIONS ── -->
+    <section class="page" id="page-communications">
+      <div class="page-title">
+        <h2>Communications</h2>
+        <p>Email · Messages · Slack</p>
+      </div>
+      <div class="sub-tabs">
+        <button class="sub-tab active" data-subtab="comm-email">Email</button>
+        <button class="sub-tab" data-subtab="comm-messages">Messages</button>
+        <button class="sub-tab" data-subtab="comm-slack">Slack</button>
+      </div>
+      <div id="comm-email" class="sub-page active"></div>
+      <div id="comm-messages" class="sub-page"></div>
+      <div id="comm-slack" class="sub-page"></div>
+    </section>
+
+    <!-- ── CONTACTS ── -->
+    <section class="page" id="page-contacts">
+      <div class="page-title">
+        <h2>Contacts</h2>
+        <p>Faculty, students, and staff at Riverside Community College</p>
+      </div>
+      <div class="explorer-bar">
+        <input id="contacts-search" class="ex-search" type="text" placeholder="Search by name, role, or email…" />
+        <select id="contacts-role" class="ex-filter">
+          <option value="">All Roles</option>
+          <option value="faculty">Faculty</option>
+          <option value="student">Students</option>
+          <option value="staff">Staff</option>
+        </select>
+        <span class="ex-count" id="contacts-count"></span>
+      </div>
+      <div id="contacts-list"></div>
+    </section>
+
+    <!-- ── CALENDAR ── -->
+    <section class="page" id="page-calendar">
+      <div class="page-title">
+        <h2>Calendar</h2>
+        <p>Scheduled events — Spring 2026</p>
+      </div>
+      <div class="explorer-bar">
+        <input id="cal-search" class="ex-search" type="text" placeholder="Search events…" />
+        <span class="ex-count" id="cal-count"></span>
+      </div>
+      <div id="cal-list"></div>
+      <div class="pagination" id="cal-pag"></div>
+    </section>
+
+    <!-- ── REMINDERS ── -->
+    <section class="page" id="page-reminders">
+      <div class="page-title">
+        <h2>Reminders</h2>
+        <p>Task and deadline reminders</p>
+      </div>
+      <div class="explorer-bar">
+        <input id="rem-search" class="ex-search" type="text" placeholder="Search reminders…" />
+        <select id="rem-repeat" class="ex-filter">
+          <option value="">All</option>
+          <option value="repeating">Repeating</option>
+          <option value="once">One-time</option>
+        </select>
+        <span class="ex-count" id="rem-count"></span>
+      </div>
+      <div id="rem-list"></div>
+      <div class="pagination" id="rem-pag"></div>
+    </section>
+
+  </main>
+
+  <!-- ══ MODAL ══ -->
+  <div id="modal-overlay" class="modal-overlay hidden" onclick="handleModalClick(event)">
+    <div class="modal-box" id="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <span class="modal-badge" id="modal-badge"></span>
+          <span class="modal-title" id="modal-title"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ LOADING ══ -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <p id="load-status">Loading Canvas Universe…</p>
+    </div>
+  </div>
+
+  <script src="js/overview.js"></script>
+  <script src="js/gradebook.js"></script>
+  <script src="js/communications.js"></script>
+  <script src="js/contacts.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
