@@ -57,7 +57,7 @@ function _drawReminders() {
     _remSelectedKey = visibleItemKeys[0] || _remDateKey(_remMonth);
   }
 
-  const monthLabel = _remMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const monthLabel = _remMonth.toLocaleDateString('en-US', { timeZone: CANVAS_TIME_ZONE, month: 'long', year: 'numeric' });
   const selectedItems = grouped[_remSelectedKey] || [];
   const repeatCount = filtered.filter(r => r.repetition_unit).length;
 
@@ -78,10 +78,10 @@ function _drawReminders() {
   _remMonthDays(_remMonth).forEach(day => {
     const key = _remDateKey(day);
     const items = grouped[key] || [];
-    const sameMonth = day.getMonth() === _remMonth.getMonth();
+    const sameMonth = day.getUTCMonth() === _remMonth.getUTCMonth();
     const isSelected = key === _remSelectedKey;
     html += `<button type="button" class="month-cell ${sameMonth ? '' : 'is-muted'} ${items.length ? 'has-items' : ''} ${isSelected ? 'is-selected' : ''}" onclick="_remSelectDay('${key}')">
-      <span class="month-day">${day.getDate()}</span>
+      <span class="month-day">${day.getUTCDate()}</span>
       <span class="month-items">
         ${items.slice(0, 3).map(item => _reminderChip(item)).join('')}
         ${items.length > 3 ? `<span class="month-more">+${items.length - 3} more</span>` : ''}
@@ -118,7 +118,7 @@ function _remFiltered() {
 }
 
 function _remShiftMonth(delta) {
-  _remMonth = new Date(_remMonth.getFullYear(), _remMonth.getMonth() + delta, 1);
+  _remMonth = new Date(Date.UTC(_remMonth.getUTCFullYear(), _remMonth.getUTCMonth() + delta, 1));
   _remSelectedKey = '';
   _drawReminders();
 }
@@ -177,10 +177,10 @@ function _groupReminderItems(items) {
 }
 
 function _remMonthDays(month) {
-  const first = new Date(month.getFullYear(), month.getMonth(), 1);
+  const first = new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth(), 1));
   const start = new Date(first);
-  start.setDate(first.getDate() - first.getDay());
-  return Array.from({ length: 42 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
+  start.setUTCDate(first.getUTCDate() - first.getUTCDay());
+  return Array.from({ length: 42 }, (_, i) => new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate() + i)));
 }
 
 function _remMonthKeys(month) {
@@ -193,19 +193,19 @@ function _remDateFromTs(ts) {
 }
 
 function _remStartOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
 
 function _remDateKey(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
 }
 
 function _remFormatDateKey(key) {
   const [year, month, day] = key.split('-').map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('en-US', { timeZone: CANVAS_TIME_ZONE, weekday: 'long', month: 'long', day: 'numeric' });
 }
 
 function _remTime(ts) {
   if (!ts) return '';
-  return _remDateFromTs(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  return _remDateFromTs(ts).toLocaleTimeString('en-US', { timeZone: CANVAS_TIME_ZONE, hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
 }

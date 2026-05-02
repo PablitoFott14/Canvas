@@ -6,6 +6,7 @@
 const BASE = '../openclaw-canvas-universe-hzf3qcwv/openclaw-canvas-universe-hzf3qcwv/services/';
 
 const SERVICES = ['airtable', 'calendar', 'contacts', 'email', 'messaging', 'reminder', 'slack'];
+const CANVAS_TIME_ZONE = 'UTC';
 
 const DATA = {};
 let activeTab = 'overview';
@@ -108,7 +109,7 @@ function fmtTs(ts) {
   const n = typeof ts === 'string' ? parseFloat(ts) : ts;
   if (!isFinite(n)) return escHtml(String(ts));
   const ms = n > 1e12 ? n : n * 1000;
-  return new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(ms).toLocaleDateString('en-US', { timeZone: CANVAS_TIME_ZONE, month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function fmtTsTime(ts) {
@@ -116,8 +117,8 @@ function fmtTsTime(ts) {
   const n = typeof ts === 'string' ? parseFloat(ts) : ts;
   const ms = n > 1e12 ? n : n * 1000;
   const d = new Date(ms);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' +
-    d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  return d.toLocaleDateString('en-US', { timeZone: CANVAS_TIME_ZONE, month: 'short', day: 'numeric' }) + ' ' +
+    d.toLocaleTimeString('en-US', { timeZone: CANVAS_TIME_ZONE, hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
 }
 
 function fmtDateStr(s) {
@@ -125,7 +126,7 @@ function fmtDateStr(s) {
   try {
     const d = new Date(s);
     if (isNaN(d)) return escHtml(String(s));
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return d.toLocaleDateString('en-US', { timeZone: CANVAS_TIME_ZONE, month: 'short', day: 'numeric', year: 'numeric' });
   } catch { return escHtml(String(s)); }
 }
 

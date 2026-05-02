@@ -50,7 +50,7 @@ function _drawCalendar() {
     _calSelectedKey = visibleItemKeys[0] || _calDateKey(_calMonth);
   }
 
-  const monthLabel = _calMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const monthLabel = _calMonth.toLocaleDateString('en-US', { timeZone: CANVAS_TIME_ZONE, month: 'long', year: 'numeric' });
   const selectedItems = grouped[_calSelectedKey] || [];
 
   let html = `<div class="month-shell">
@@ -70,10 +70,10 @@ function _drawCalendar() {
   _monthDays(_calMonth).forEach(day => {
     const key = _calDateKey(day);
     const items = grouped[key] || [];
-    const sameMonth = day.getMonth() === _calMonth.getMonth();
+    const sameMonth = day.getUTCMonth() === _calMonth.getUTCMonth();
     const isSelected = key === _calSelectedKey;
     html += `<button type="button" class="month-cell ${sameMonth ? '' : 'is-muted'} ${items.length ? 'has-items' : ''} ${isSelected ? 'is-selected' : ''}" onclick="_calSelectDay('${key}')">
-      <span class="month-day">${day.getDate()}</span>
+      <span class="month-day">${day.getUTCDate()}</span>
       <span class="month-items">
         ${items.slice(0, 3).map(item => _calEventChip(item)).join('')}
         ${items.length > 3 ? `<span class="month-more">+${items.length - 3} more</span>` : ''}
@@ -108,7 +108,7 @@ function _calFiltered() {
 }
 
 function _calShiftMonth(delta) {
-  _calMonth = new Date(_calMonth.getFullYear(), _calMonth.getMonth() + delta, 1);
+  _calMonth = new Date(Date.UTC(_calMonth.getUTCFullYear(), _calMonth.getUTCMonth() + delta, 1));
   _calSelectedKey = '';
   _drawCalendar();
 }
@@ -174,10 +174,10 @@ function _groupCalendarItems(items, tsField) {
 }
 
 function _monthDays(month) {
-  const first = new Date(month.getFullYear(), month.getMonth(), 1);
+  const first = new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth(), 1));
   const start = new Date(first);
-  start.setDate(first.getDate() - first.getDay());
-  return Array.from({ length: 42 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
+  start.setUTCDate(first.getUTCDate() - first.getUTCDay());
+  return Array.from({ length: 42 }, (_, i) => new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate() + i)));
 }
 
 function _monthKeys(month) {
@@ -190,21 +190,21 @@ function _calDateFromTs(ts) {
 }
 
 function _calStartOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
 
 function _calDateKey(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
 }
 
 function _formatDateKey(key) {
   const [year, month, day] = key.split('-').map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('en-US', { timeZone: CANVAS_TIME_ZONE, weekday: 'long', month: 'long', day: 'numeric' });
 }
 
 function _calTime(ts) {
   if (!ts) return '';
-  return _calDateFromTs(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  return _calDateFromTs(ts).toLocaleTimeString('en-US', { timeZone: CANVAS_TIME_ZONE, hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
 }
 
 function _courseClass(title = '') {
